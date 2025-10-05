@@ -1,0 +1,36 @@
+name: Schedule main.py
+
+on:
+  schedule:
+    - cron: "0 15 * * *" # 00:00 JST
+
+jobs:
+  run-main:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Tokyo
+
+    steps:
+      # 1. コードをチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Python セットアップ
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # 3. uv インストール
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      # 4. 依存関係インストール
+      - name: Install dependencies
+        run: uv sync
+
+      # 5. main.py 実行
+      - name: Run main.py
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: uv run python main.py
