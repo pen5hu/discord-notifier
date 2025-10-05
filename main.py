@@ -1,28 +1,30 @@
-import os
 import sys
-import requests
 from dotenv import load_dotenv
-
-load_dotenv()
-
-DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
+from infrastructure.discord_repository import DiscordRepository
+from usecase.notify_after_birth_days_usecase import NotifyAfterBirthDaysUsecase
+from controller.notify_after_birth_days_controller import NotifyAfterBirthDaysController
 
 
 def main():
-    if not DISCORD_WEBHOOK_URL:
-        print(
-            "エラー: 環境変数 'DISCORD_WEBHOOK_URL' が設定されていません。",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+    load_dotenv()
 
-    message = "✅ Discord通知ボットの定期タスクが実行されました。"
-    try:
-        response = requests.post(DISCORD_WEBHOOK_URL, json={"content": message})
-        response.raise_for_status()
-        print("メッセージが正常に送信されました。")
-    except requests.exceptions.RequestException as e:
-        print(f"エラー: メッセージの送信に失敗しました: {e}", file=sys.stderr)
+    # repository
+    discord_repository = DiscordRepository()
+
+    # usecase
+    notify_after_birth_days_usecase = NotifyAfterBirthDaysUsecase(discord_repository)
+
+    # controller
+    notify_after_birth_days_controller = NotifyAfterBirthDaysController(
+        notify_after_birth_days_usecase
+    )
+
+    success = notify_after_birth_days_controller.execute()
+    if success:
+        print("処理が正常に完了しました。")
+        sys.exit(0)
+    else:
+        print("処理が失敗しました。", file=sys.stderr)
         sys.exit(1)
 
 
