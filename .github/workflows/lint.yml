@@ -1,0 +1,31 @@
+name: Lint with Ruff
+
+on:
+  pull_request:  # PR 時のみ実行
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. コードをチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Python セットアップ
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # 3. uv インストール
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      # 4. 依存関係インストール
+      - name: Install dependencies
+        run: uv sync
+
+      # 5. Ruff でコードチェック
+      - name: Lint with Ruff
+        run: uv run ruff check .
