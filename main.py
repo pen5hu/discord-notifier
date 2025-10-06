@@ -1,3 +1,4 @@
+import os
 import sys
 from dotenv import load_dotenv
 from infrastructure.discord_repository import DiscordRepository
@@ -7,6 +8,7 @@ from controller.notify_after_birth_days_controller import NotifyAfterBirthDaysCo
 
 def main():
     load_dotenv()
+    print(f"DEBUG: DISCORD_WEBHOOK_URL exists? {bool(os.getenv('DISCORD_WEBHOOK_URL'))}")
 
     # repository
     discord_repository = DiscordRepository()
