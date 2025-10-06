@@ -8,6 +8,7 @@ on:
 jobs:
   run-main:
     runs-on: ubuntu-latest
+    environment: prod # secret 扱うには environment を指定する必要がある
     env:
       TZ: Asia/Tokyo
 
@@ -32,5 +33,7 @@ jobs:
 
       # 5. main.py 実行
       - name: Run main.py
-        run: DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }} uv run python main.py
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: uv run python main.py
 
