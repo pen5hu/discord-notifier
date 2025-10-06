@@ -3,12 +3,14 @@ name: Schedule main.py
 on:
   schedule:
     - cron: "0 15 * * *" # 00:00 JST
+  workflow_dispatch:
 
 jobs:
   run-main:
     runs-on: ubuntu-latest
     env:
       TZ: Asia/Tokyo
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
     steps:
       # 1. コードをチェックアウト
@@ -31,6 +33,5 @@ jobs:
 
       # 5. main.py 実行
       - name: Run main.py
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: uv run python main.py
+        run: uv run --pass-env python main.py
+
