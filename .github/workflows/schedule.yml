@@ -33,5 +33,5 @@ jobs:
 
       # 5. main.py 実行
       - name: Run main.py
-        run: uv run --pass-env python main.py
+        run: uv run --env DISCORD_WEBHOOK_URL python main.py
 
