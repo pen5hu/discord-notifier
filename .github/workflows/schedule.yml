@@ -35,5 +35,6 @@ jobs:
       - name: Run main.py
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: uv run python main.py
+          MY_BIRTHDAY: ${{ secrets.MY_BIRTHDAY }}
+        run: uv run python main.py -after-birth-days
 

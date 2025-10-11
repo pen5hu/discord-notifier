@@ -27,7 +27,7 @@ class DiscordRepository(IDiscordRepository):
                 timeout=30,  # 30秒のタイムアウトを設定
             )
             response.raise_for_status()  # HTTPエラーがあれば例外を発生
-            print(f"Discordにメッセージが正常に送信されました。: {message.content}")
+            print("Discordにメッセージが正常に送信されました。")
             return True
 
         except ConnectionError as e:
