@@ -1,6 +1,5 @@
 from domain.discord_repository_interface import IDiscordRepository
 from domain.notification_message import NotificationMessage
-import os
 import requests
 import sys
 from requests.exceptions import RequestException, ConnectionError, Timeout, HTTPError
@@ -9,8 +8,8 @@ from requests.exceptions import RequestException, ConnectionError, Timeout, HTTP
 class DiscordRepository(IDiscordRepository):
     webhook_url: str
 
-    def __init__(self):
-        self.webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
+    def __init__(self, webhook_url: str):
+        self.webhook_url = webhook_url
 
     def notify_message(self, message: NotificationMessage) -> bool:
         if not self.webhook_url:
@@ -21,12 +20,26 @@ class DiscordRepository(IDiscordRepository):
             return False
 
         try:
+            payload = {
+                "embeds": [
+                    {
+                        "title": message.title,
+                        "description": message.description,
+                        "color": message.color,
+                        "footer": {
+                            "text": message.footer_text,
+                        },
+                    }
+                ]
+            }
+
             response = requests.post(
                 self.webhook_url,
-                json={"content": message.content},
+                json=payload,
                 timeout=30,  # 30秒のタイムアウトを設定
             )
             response.raise_for_status()  # HTTPエラーがあれば例外を発生
+
             print("Discordにメッセージが正常に送信されました。")
             return True
 

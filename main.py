@@ -1,3 +1,4 @@
+import os
 import sys
 from dotenv import load_dotenv
 from infrastructure.discord_repository import DiscordRepository
@@ -7,7 +8,8 @@ from controller.notify_after_birth_days_controller import NotifyAfterBirthDaysCo
 
 def notify_after_birth_days():
     # repository
-    discord_repository = DiscordRepository()
+    webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
+    discord_repository = DiscordRepository(webhook_url=webhook_url)
 
     # usecase
     notify_after_birth_days_usecase = NotifyAfterBirthDaysUsecase(discord_repository)
