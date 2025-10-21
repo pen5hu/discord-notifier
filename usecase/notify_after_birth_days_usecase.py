@@ -29,8 +29,11 @@ class NotifyAfterBirthDaysUsecase:
         today = date.today()
         days_passed = (today - birthday).days
 
-        message = NotificationMessage(f"誕生日から{days_passed}日が経過しました。")
-        if not message.content:
+        message = NotificationMessage(
+            title=f"誕生日から {days_passed} 日が経過",
+            footer_text="※誕生日自体は日数に含まれていません",
+        )
+        if not message:
             return False
 
         success = self.discord_repository.notify_message(message)
