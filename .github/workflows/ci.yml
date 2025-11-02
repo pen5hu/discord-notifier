@@ -1,10 +1,10 @@
-name: Lint with Ruff
+name: Lint and Test
 
 on:
-  pull_request:  # PR 時のみ実行
+  pull_request:
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,3 +29,7 @@ jobs:
       # 5. Ruff でコードチェック
       - name: Lint with Ruff
         run: uv run ruff check .
+
+      # 6. unittest を実行
+      - name: Run unittest
+        run: uv run python -m unittest discover tests
