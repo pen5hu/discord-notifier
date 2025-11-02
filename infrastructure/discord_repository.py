@@ -1,4 +1,5 @@
 import logging
+from common.result import Result
 from domain.discord_repository_interface import IDiscordRepository
 from domain.notification_message import NotificationMessage
 import requests
@@ -13,12 +14,14 @@ class DiscordRepository(IDiscordRepository):
     def __init__(self, webhook_url: str):
         self.webhook_url = webhook_url
 
-    def notify_message(self, message: NotificationMessage) -> bool:
+    def notify_message(self, message: NotificationMessage) -> Result[None, Exception]:
         if not self.webhook_url:
             logger.error(
                 "エラー: 環境変数 'DISCORD_WEBHOOK_URL' が設定されていません。",
             )
-            return False
+            return Result.Err(
+                Exception("環境変数 'DISCORD_WEBHOOK_URL' が設定されていません。")
+            )
 
         try:
             payload = {
@@ -42,26 +45,32 @@ class DiscordRepository(IDiscordRepository):
             response.raise_for_status()  # HTTPエラーがあれば例外を発生
 
             logger.info("Discordにメッセージが正常に送信されました。")
-            return True
+            return Result.Ok(None)
 
         except ConnectionError as e:
             logger.error(f"エラー: Discordへの接続に失敗しました: {str(e)}")
-            return False
+            return Result.Err(Exception(f"Discordへの接続に失敗しました: {str(e)}"))
         except Timeout as e:
             logger.error(
                 f"エラー: Discordへのリクエストがタイムアウトしました: {str(e)}",
             )
-            return False
+            return Result.Err(
+                Exception(f"Discordへのリクエストがタイムアウトしました: {str(e)}")
+            )
         except HTTPError as e:
             logger.error(
                 f"エラー: DiscordからHTTPエラーが返されました: {str(e)}",
             )
-            return False
+            return Result.Err(
+                Exception(f"DiscordからHTTPエラーが返されました: {str(e)}")
+            )
         except RequestException as e:
             logger.error(
                 f"エラー: Discordへのリクエスト中にエラーが発生しました: {str(e)}",
             )
-            return False
+            return Result.Err(
+                Exception(f"Discordへのリクエスト中にエラーが発生しました: {str(e)}")
+            )
         except Exception as e:
             logger.error(f"エラー: 予期しないエラーが発生しました: {str(e)}")
-            return False
+            return Result.Err(Exception(f"予期しないエラーが発生しました: {str(e)}"))

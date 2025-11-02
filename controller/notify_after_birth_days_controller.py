@@ -1,3 +1,4 @@
+from common.result import Result
 from usecase.notify_after_birth_days_usecase import NotifyAfterBirthDaysUsecase
 
 
@@ -7,9 +8,5 @@ class NotifyAfterBirthDaysController:
     def __init__(self, usecase: NotifyAfterBirthDaysUsecase):
         self.usecase = usecase
 
-    def execute(self):
-        success = self.usecase.execute()
-        if success:
-            return True
-        else:
-            return False
+    def execute(self) -> Result[None, Exception]:
+        return self.usecase.execute()
