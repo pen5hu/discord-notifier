@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 from dotenv import load_dotenv
+from common.result import Result
 from infrastructure.discord_repository import DiscordRepository
 from logging_config import setup_logging
 from usecase.notify_after_birth_days_usecase import NotifyAfterBirthDaysUsecase
@@ -25,13 +26,7 @@ def notify_after_birth_days():
         notify_after_birth_days_usecase
     )
 
-    success = notify_after_birth_days_controller.execute()
-    if success:
-        logger.info("処理が正常に完了しました。")
-        sys.exit(0)
-    else:
-        logger.error("処理が失敗しました。")
-        sys.exit(1)
+    return notify_after_birth_days_controller.execute()
 
 
 def main():
@@ -40,11 +35,19 @@ def main():
         logger.warning("引数を指定してください。")
         sys.exit(1)
 
+    result: Result[None, Exception] = None
     command = args[1]
     if command == "-after-birth-days":
-        notify_after_birth_days()
+        result = notify_after_birth_days()
     else:
         logger.warning(f"不明なコマンドです: {command}")
+        sys.exit(1)
+
+    if result.ok:
+        logger.info("処理が正常に完了しました。")
+        sys.exit(0)
+    else:
+        logger.error("処理が失敗しました。")
         sys.exit(1)
 
 
