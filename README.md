@@ -49,6 +49,14 @@ fomatter
 uv run ruff format .
 ```
 
+## test
+
+`uv run` コマンドでユニットテストを実行します。
+
+```bash
+uv run python -B -m unittest discover tests 
+```
+
 ## 環境変数
 
 | 環境変数名              | 説明                                     | 必須 |
