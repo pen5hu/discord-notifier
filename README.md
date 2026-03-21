@@ -62,6 +62,6 @@ uv run python -B -m unittest discover tests
 | 環境変数名              | 説明                                     | 必須 |
 | ----------------------- | ---------------------------------------- | ---- |
 | `DISCORD_WEBHOOK_URL`   | 通知を送信するDiscordのWebhook URL。     | はい |
-| `MY_BIRTHDAY` |誕生日の年月日、現在が誕生日から何日経過したかを計算するために使用します。 | はい |
+| `MY_BIRTHDAY`           | 誕生日の年月日（YYYY/MM/DD形式）。現在が誕生日から何日経過したかを計算するために使用します。 | はい |
 
 
