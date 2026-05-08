@@ -10,16 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod # secret 扱うには environment を指定する必要がある
     env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       TZ: Asia/Tokyo
 
     steps:
       # 1. コードをチェックアウト
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # 2. Python セットアップ
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.13"
 
