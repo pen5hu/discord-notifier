@@ -1,3 +1,18 @@
 [tools]
 python = "3.13"
 uv = "0.8.23"
+
+[tasks.main]
+description = 'main.py を実行する（送信する内容別のサブコマンドが必要です）'
+run = 'uv run python main.py'
+
+[tasks.format]
+description = 'コードフォーマットを実行する'
+run = [
+  'uv run ruff check --fix .',
+  'uv run ruff format .',
+]
+
+[tasks.test]
+description = 'ユニットテストを実行する'
+run = 'uv run python -B -m unittest discover tests'

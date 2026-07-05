@@ -4,9 +4,8 @@ import sys
 from dotenv import load_dotenv
 from common.result import Result
 from infrastructure.discord_repository import DiscordRepository
-from logging_config import setup_logging
+from common.logging_config import setup_logging
 from usecase.notify_after_birth_days_usecase import NotifyAfterBirthDaysUsecase
-from controller.notify_after_birth_days_controller import NotifyAfterBirthDaysController
 
 load_dotenv()
 setup_logging()
@@ -14,41 +13,39 @@ logger = logging.getLogger(__name__)
 
 
 def notify_after_birth_days():
-    # repository
     webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
+
+    # repository
     discord_repository = DiscordRepository(webhook_url=webhook_url)
 
     # usecase
     notify_after_birth_days_usecase = NotifyAfterBirthDaysUsecase(discord_repository)
 
-    # controller
-    notify_after_birth_days_controller = NotifyAfterBirthDaysController(
-        notify_after_birth_days_usecase
-    )
+    return notify_after_birth_days_usecase.execute()
 
-    return notify_after_birth_days_controller.execute()
+
+COMMANDS = {
+    "-after-birth-days": notify_after_birth_days,
+}
 
 
 def main():
-    args = sys.argv
-    if len(args) < 2:
-        logger.warning("引数を指定してください。")
+    if len(sys.argv) != 2:
+        logger.warning("サブコマンドが不足しています")
         sys.exit(1)
 
-    result: Result[None, Exception] = None
-    command = args[1]
-    if command == "-after-birth-days":
-        result = notify_after_birth_days()
-    else:
-        logger.warning(f"不明なコマンドです: {command}")
+    cmd = sys.argv[1]
+    if cmd not in COMMANDS:
+        logger.warning(f"不明なコマンドです: {cmd}")
         sys.exit(1)
 
-    if result.ok:
-        logger.info("処理が正常に完了しました。")
-        sys.exit(0)
-    else:
+    result: Result[None, Exception] = COMMANDS[cmd]()
+    if not result.ok:
         logger.error("処理が失敗しました。")
         sys.exit(1)
+
+    logger.info("処理が正常に完了しました。")
+    sys.exit(0)
 
 
 if __name__ == "__main__":
