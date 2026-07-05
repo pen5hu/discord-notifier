@@ -1,8 +1,0 @@
-{
-    "python.defaultInterpreterPath": ".venv/bin/python",
-    "cSpell.words": [
-      "usecase",  
-      "dotenv"
-    ],
-  }
-  
